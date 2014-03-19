@@ -27,10 +27,10 @@ end
 --------------------------------------------------------------------------
 -- main premade hover over tooltip functions
 --------------------------------------------------------------------------
-function oq.tooltip_label( tt, x, y, align )
+function oq.tooltip_label( tt, x, y, align, cx )
   local t = tt:CreateFontString() ;
   t:SetFontObject(GameFontNormal)
-  t:SetWidth( tt:GetWidth()- (x + 2*15) ) ;
+  t:SetWidth( cx or (tt:GetWidth()- (x + 2*15)) ) ;
   t:SetHeight( 15 ) ;
   t:SetJustifyV( "MIDDLE" ) ;
   t:SetJustifyH( align ) ;
@@ -262,7 +262,6 @@ function oq.tooltip_set2( f, m, totheside, is_lead )
   local nRows = 14 ;
   totheside = true ;
   if (totheside) then
---    local p = f:GetParent():GetParent():GetParent() ;
     tooltip:SetParent( OQMainFrame, "ANCHOR_RIGHT" ) ;
     tooltip:SetPoint("TOPLEFT", OQMainFrame, "TOPRIGHT", 10, 0 ) ;
     tooltip:SetFrameLevel( OQMainFrame:GetFrameLevel() + 10 ) ;
@@ -435,7 +434,7 @@ function oq.long_tooltip_create()
   if (oq.long_tooltip ~= nil) then
     return oq.long_tooltip ;
   end
-  local tooltip = oq.CreateFrame("FRAME", "OQTooltip", UIParent, nil ) ;
+  local tooltip = oq.CreateFrame("FRAME", "OQLongTooltip", UIParent, nil ) ;
   if (oq.__backdrop21 == nil) then
     oq.__backdrop21 = { bgFile="Interface/Tooltips/UI-Tooltip-Background", 
                         edgeFile="Interface/Tooltips/UI-Tooltip-Border", 
@@ -660,9 +659,9 @@ function oq.pm_tooltip_create()
 
   local x = 8 ;
   local y = 12 ;
-  for i = 1, pm_tooltip.nRows do
+  for i = 1, pm_tooltip.nRows+5 do
     pm_tooltip.left [i] = oq.tooltip_label( pm_tooltip, x, y, "LEFT"  ) ;
-    pm_tooltip.right[i] = oq.tooltip_label( pm_tooltip, x, y, "RIGHT" ) ;
+    pm_tooltip.right[i] = oq.tooltip_label( pm_tooltip, x, y, "RIGHT", pm_tooltip:GetWidth() - 27 ) ;
     if (i == 1) then
       x = x + 10 ;
       y = y + 2 ;
@@ -673,36 +672,45 @@ function oq.pm_tooltip_create()
       pm_tooltip.left [i]:SetTextColor( 0.6, 0.6, 0.6 ) ;
       pm_tooltip.left [i]:SetFont(OQ.FONT, 10, "") ;
 
-      pm_tooltip.right[i]:SetPoint("TOPRIGHT", pm_tooltip,"TOPRIGHT", -10, -1 * y ) ;
+--      pm_tooltip.right[i]:SetPoint("TOPRIGHT", pm_tooltip,"TOPRIGHT", -10, -1 * y ) ;
       pm_tooltip.right[i]:SetTextColor( 0.9, 0.9, 0.25 ) ;
-      pm_tooltip.right[i]:SetFont(OQ.FONT, 10, "") ;
+--      pm_tooltip.right[i]:SetFont(OQ.FONT, 10, "") ;
     end
+    pm_tooltip.left [i]:SetJustifyH( "LEFT"  ) ;
+    pm_tooltip.right[i]:SetJustifyH( "RIGHT" ) ;
     y = y + 15 ;
   end
   return pm_tooltip ;
 end
 
 function oq.pm_tooltip_clear()
-  for i = 1,pm_tooltip.nRows do
+  for i = 1,pm_tooltip.nRows+5 do
     pm_tooltip.left [i]:SetText( "" ) ;
     pm_tooltip.right[i]:SetText( "" ) ;
   end
 end
 
-function oq.pm_tooltip_get_xpbar( easy, hard, nbosses )
-  local hero = "|TInterface\\Addons\\oqueue\\art\\red_block_64.tga:9:9:0:0|t";
-  local norm = "|TInterface\\Addons\\oqueue\\art\\green_block_64.tga:9:9:0:0|t";
-  local none = "|TInterface\\Addons\\oqueue\\art\\grey_block_64.tga:9:9:0:0|t";
+function oq.pm_tooltip_get_xpbar( easy, hard, flexi, nbosses, b1, b2 ) -- b1, b2 == breaks
+  local flex = "|TInterface\\Addons\\oqueue\\art\\yellow_block_64.tga:10:10:0:0|t";
+  local hero = "|TInterface\\Addons\\oqueue\\art\\red_block_64.tga:10:10:0:0|t";
+  local norm = "|TInterface\\Addons\\oqueue\\art\\green_block_64.tga:10:10:0:0|t";
+  local none = "|TInterface\\Addons\\oqueue\\art\\grey_block_64.tga:10:10:0:0|t";
   local str = "" ;
-  easy = oq.decode_mime64_digits( easy ) ;
-  hard = oq.decode_mime64_digits( hard ) ;
+  easy  = oq.decode_mime64_digits( easy ) ;
+  hard  = oq.decode_mime64_digits( hard ) ;
+  flexi = oq.decode_mime64_digits( flexi ) ;
   for i=1,nbosses do
     if (oq.is_set( hard, bit.lshift( 1, i-1 ) )) then
       str = str .."".. hero ;
     elseif (oq.is_set( easy, bit.lshift( 1, i-1 ) )) then
       str = str .."".. norm ;
+    elseif (oq.is_set( flexi, bit.lshift( 1, i-1 ) )) then
+      str = str .."".. flex ;
     else
       str = str .."".. none ;
+    end
+    if ((b1) and (b1 == i)) or ((b2) and (b2 == i)) then
+      str = str .." " ;
     end
   end
   return str ;
@@ -747,8 +755,8 @@ function oq.pm_tooltip_set( f, raid_token )
   local rank = 0 ;
 
   pm_tooltip.left [ 1]:SetText( raid.name ) ;
-  pm_tooltip.right[ 1]:SetText( oq.get_rank_icons( raid.leader_xp:sub(10,-1) ) ) ;
- 
+  pm_tooltip.right[ 1]:SetText( "" ) ;
+
   pm_tooltip.left [ 2]:SetText( OQ.TT_LEADER ) ;
   
   if (raid.karma) and (raid.karma ~= 0) then
@@ -767,11 +775,18 @@ function oq.pm_tooltip_set( f, raid_token )
   pm_tooltip.right[ 5]:SetText( nMembers ) ;
   pm_tooltip.left [ 6]:SetText( OQ.TT_WAITLIST ) ;
   pm_tooltip.right[ 6]:SetText( nWaiting ) ;
+
+  if (raid.type == OQ.TYPE_RAID) or (raid.type == OQ.TYPE_DUNGEON) then
+    pm_tooltip:SetHeight( 12 + (pm_tooltip.nRows+1)*16 ) ;
+  else
+    pm_tooltip:SetHeight( 12 + pm_tooltip.nRows*16 ) ;
+  end
   
   --
   -- leader experience
   --
   if (raid.type == OQ.TYPE_BG) or (raid.type == OQ.TYPE_RBG) then
+    pm_tooltip.right[ 1]:SetText( oq.get_rank_icons( raid.leader_xp:sub(10,-1) ) ) ;
     pm_tooltip.left [ 7]:SetText( OQ.TT_RECORD ) ;
     nWins, nLosses = oq.get_winloss_record( raid.leader_xp ) ;
     local tag, y, cx, cy, title, r1 = oq.get_dragon_rank( raid.type, nWins or 0 ) ;  
@@ -848,7 +863,7 @@ function oq.pm_tooltip_set( f, raid_token )
     
   elseif (raid.type == OQ.TYPE_RAID) or (raid.type == OQ.TYPE_DUNGEON) then
     nWins, nLosses = oq.get_pve_winloss_record( raid.leader_xp ) ;
-    local dkp            = oq.decode_mime64_digits(raid.leader_xp:sub(17,19)) ;
+    local dkp      = oq.decode_mime64_digits(raid.leader_xp:sub(17,19)) ;
     local tag, y, cx, cy, title, r1 = oq.get_dragon_rank( raid.type, dkp or 0 ) ;  
     rank = r1 ;
 
@@ -871,18 +886,26 @@ function oq.pm_tooltip_set( f, raid_token )
     pm_tooltip.left [pm_tooltip.nRows - 5]:SetText( "|cFFFFD331".. OQ.LABEL_RAIDS .."|r" ) ;
     pm_tooltip.right[pm_tooltip.nRows - 5]:SetText( "" ) ;
     pm_tooltip.left [pm_tooltip.nRows - 4]:SetText( OQ.RAID_TOES ) ;
-    pm_tooltip.right[pm_tooltip.nRows - 4]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(1,1), raids:sub(2,2), 4 ) ) ;
+    pm_tooltip.right[pm_tooltip.nRows - 4]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(1,1), raids:sub(2,2), nil, 4 ) ) ;
     pm_tooltip.left [pm_tooltip.nRows - 3]:SetText( OQ.RAID_HOF ) ;
-    pm_tooltip.right[pm_tooltip.nRows - 3]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(3,3), raids:sub(4,4), 6 ) ) ;
+    pm_tooltip.right[pm_tooltip.nRows - 3]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(3,3), raids:sub(4,4), nil, 6, 3,nil ) ) ; -- last 2 params: break insert
     pm_tooltip.left [pm_tooltip.nRows - 2]:SetText( OQ.RAID_MV ) ;
-    pm_tooltip.right[pm_tooltip.nRows - 2]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(5,5), raids:sub(6,6), 6 ) ) ;
+    pm_tooltip.right[pm_tooltip.nRows - 2]:SetText( oq.pm_tooltip_get_xpbar( raids:sub(5,5), raids:sub(6,6), nil, 6, 3,nil ) ) ; -- last 2 params: break insert
 
     pm_tooltip.left [pm_tooltip.nRows - 1]:SetText( OQ.RAID_TOT ) ;
-    dots =             oq.pm_tooltip_get_xpbar( raids:sub(7,7), raids:sub( 8, 8), 6 ) ;
-    dots = dots .."".. oq.pm_tooltip_get_xpbar( raids:sub(9,9), raids:sub(10,10), 6 ) ;
+    dots =             oq.pm_tooltip_get_xpbar( raids:sub(7,7), raids:sub( 9, 9), nil, 6 , 3,6 ) ;
+    dots = dots .."".. oq.pm_tooltip_get_xpbar( raids:sub(8,8), raids:sub(10,10), nil, 6 , 3,nil ) ;
     pm_tooltip.right[pm_tooltip.nRows - 1]:SetText( dots ) ;    
     pm_tooltip.left [pm_tooltip.nRows - 0]:SetText( OQ.RAID_RA_DEN ) ;
-    pm_tooltip.right[pm_tooltip.nRows - 0]:SetText( oq.pm_tooltip_get_xpbar( nil, raids:sub(11,11), 1 ) ) ;
+    dots = " " .. oq.pm_tooltip_get_xpbar( nil, raids:sub(11,11), nil, 1 ) .. " " ;
+    pm_tooltip.right[pm_tooltip.nRows - 0]:SetText( dots ) ;
+    pm_tooltip.left [pm_tooltip.nRows + 1]:SetText( OQ.RAID_SOO ) ;
+    
+    -- record: bbbwwLLLmmm   12,22
+    dots =             oq.pm_tooltip_get_xpbar( raids:sub(23,23), raids:sub(26,26), raids:sub(29,29), 6, 4,nil ) ; -- last 2 params: break insert
+    dots = dots .."".. oq.pm_tooltip_get_xpbar( raids:sub(24,24), raids:sub(27,27), raids:sub(30,30), 6, 2,5   ) ; -- last 2 params: break insert
+    dots = dots .."".. oq.pm_tooltip_get_xpbar( raids:sub(25,25), raids:sub(28,28), raids:sub(31,31), 2 ) ;
+    pm_tooltip.right[pm_tooltip.nRows + 1]:SetText( dots ) ;
   end
 
   -- set dragon

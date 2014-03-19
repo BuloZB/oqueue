@@ -227,6 +227,7 @@ OQ.DLG_19             = "You must qualify for your own premade" ;
 OQ.DLG_20             = "No groups allowed for this premade type" ;
 OQ.DLG_21             = "Leave your premade before wait listing" ;
 OQ.DLG_22             = "Disband your premade before wait listing" ;
+OQ.DLG_23             = "Armory link:\n\n  ctrl+C to copy the link \n  then paste it into your browser with ctrl+V\n" ;
 OQ.MENU_KICKGROUP     = "kick group" ;
 OQ.MENU_SETLEAD       = "set group leader" ;
 OQ.HONOR_PTS          = "Honor Points" ;
@@ -271,11 +272,12 @@ OQ.LOST               = "lost" ;
 OQ.PERHOUR            = "per hour" ;
 OQ.NOW                = "now" ;
 OQ.WITH               = "with" ;
-OQ.RAID_TOES          = GetRealZoneText(996) ;
-OQ.RAID_HOF           = GetRealZoneText(1009) ;
-OQ.RAID_MV            = GetRealZoneText(1008) ;
-OQ.RAID_TOT           = GetRealZoneText(1098) ;
+OQ.RAID_TOES          = "ТВВ" ;
+OQ.RAID_HOF           = "СС" ;
+OQ.RAID_MV            = "ПМ" ;
+OQ.RAID_TOT           = "ПГ" ;
 OQ.RAID_RA_DEN        = select(2, EJ_GetCreatureInfo(1, 831)) ;
+OQ.RAID_SOO           = "ОО" ;
 OQ.RBG_HRANK_1        = GetTitleName(168) ;
 OQ.RBG_HRANK_2        = GetTitleName(169) ;
 OQ.RBG_HRANK_3        = GetTitleName(170) ;
@@ -378,6 +380,28 @@ OQ.TT_FRIEND_REQUEST  = "friend request" ;
 OQ.DEATHMATCH_BEGINS  = "WPvP Death Match has begun!  Get to the spine in Pandaria and defend your pvp vendors!" ;
 OQ.WONTHEMATCH        = "won the match!" ;
 OQ.MSG_MISSINGTYPE    = "Please select premade type" ;
+
+OQ.LABEL_VENTRILO     = "Ventrilo" ;
+OQ.LABEL_SKYPE        = "Skype" ;
+OQ.LABEL_TEAMSPEAK    = "Teamspeak" ;
+OQ.LABEL_DOLBYAXON    = "Dolby Axon" ;
+OQ.LABEL_RAIDCALL     = "RaidCall" ;
+OQ.LABEL_MUMBLE       = "Mumble" ;
+OQ.LABEL_UNSPECIFIED  = "Unspecified" ;
+OQ.LABEL_NOVOICE      = "No voice" ;
+
+OQ.LABEL_US_ENGLISH   = "English (US)" ;
+OQ.LABEL_UK_ENGLISH   = "English (UK)" ;
+OQ.LABEL_OC_ENGLISH   = "English (Oceanic)" ;
+OQ.LABEL_RUSSIAN      = "Russian" ;
+OQ.LABEL_GERMAN       = "German" ;
+OQ.LABEL_ES_SPANISH   = "Spanish (ES)" ;
+OQ.LABEL_MX_SPANISH   = "Spanish (MX)" ;
+OQ.LABEL_BR_PORTUGUESE= "Portuguese (BR)" ;
+OQ.LABEL_PT_PORTUGUESE= "Portuguese (PT)" ;
+OQ.LABEL_FRENCH       = "French" ;
+OQ.LABEL_ITALIAN      = "Italian" ;
+
 
 OQ.CONTRIBUTION_DLG = { "",
                         "Having fun with oQueue and public vent?",
@@ -772,3 +796,27 @@ L["<html><body>"..
   "<h1 align=\"left\">twitter</h1>".. 
   "<p>twitter.com/tinystomper</p>"..
   "</body></html>"] = nil ; 
+
+OQ.HINTS = { [ 1] = L["if your buddy is always standing in the fire, he might not see it due to being color blind<br/><br/>click the '+' button next to color blind support on the setup tab to cycle through the various color schemes."],
+             [ 2] = L["control+left-click on a leader or wait list item to get their armory link"],
+             [ 3] = L["control+left-click on a friendly player will auto-inspect and show their gear"],
+             [ 4] = L["holding SHIFT on the find-premade tab will PAUSE the list until released"],
+             [ 5] = L["avoid pug groups with no voice comms for a better experience.<br/><br/>try to reach out and communicate with the people in your group.  you may learn new techniques, strategies, or maybe make a friend."],
+             [ 6] = L["award karma to group members using the log or clicking their square on the main premade tab"],
+             [ 7] = L["resize the window by dragging the bottom right corner"],
+             [ 8] = L["list local group leaders by typing: <br/><br/>/oq show locals"],
+             [ 9] = L["if you see no premades, your connection might be weak or broken.<br/><br/>if you have a weak or broken connection, hit find-mesh and wait for connections from the scorekeeper<br/><br/>also make sure 'auto-join oqgeneral' on setup is checked"],
+             [10] = L["hitting find-mesh will request mesh tags from the scorekeeper.  he will send you six(6) random tags active in the last hour.<br/><br/>they may or may not still be online, but will connect when they log in next"],
+             [11] = L["your mesh connection is in the lower right<br/><br/>[realm] - [bnet list]<br/><br/>your connection is 'weak' if the sum is less then 20"],
+             [12] = L["gain more mesh connections by clicking the find-mesh button"],
+             [13] = L["clicking the remove-now button will remove mesh connections.  use with caution"],
+             [14] = L["right-click the red 'x' on the find-premade list to ban that group leader"],
+             [15] = L["if you're confused, find tiny in public vent"],
+             [16] = L["click the spyglass at the top left of the find-premade tab to filter the list<br/><br/>you can use the following logical operators:<br/><br/> &amp; (and)<br/> | (or)<br/> ! (not)<br/><br/>ie:  rbgs | cta &amp; !yolo<br/><br/>meaning:<br/> rbgs or cta and not yolo"],
+             [17] = L["you can use wildcards in the spyglass filter<br/><br/>ie:  flex.*1"],
+             [18] = L["more advanced filters are possible<br/><br/>ie: flex.*1 | flex.*2"],
+             [19] = L["leaders with good karma will have greenish names on the find-premade list.<br/><br/>leaders with bad karma will be shown in red<br/><br/>white is neutral"],
+             [20] = L["your karma reflects the opinions of your performance and personality by those you've grouped with.<br/><br/>karma ranges from -25 to +25 and degrades by 1 pt, back towards 0, every 24 hours"],
+             [21] = L["right-click filter options on the find-premade tab to toggle exclusion of that type."],
+           } ;
+

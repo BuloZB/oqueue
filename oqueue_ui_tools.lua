@@ -28,6 +28,7 @@ OQ.BUTTON_NEXT_DN   = "INTERFACE/BUTTONS/UI-SpellbookIcon-NextPage-Down" ;
 OQ.BUTTON_NEXT_UP   = "INTERFACE/BUTTONS/UI-SpellbookIcon-NextPage-Up" ;
 OQ.BUTTON_PREV_DISABLED  = "INTERFACE/BUTTONS/UI-SpellbookIcon-PrevPage-Disabled" ;
 OQ.BUTTON_NEXT_DISABLED  = "INTERFACE/BUTTONS/UI-SpellbookIcon-NextPage-Disabled" ;
+OQ.PLACEHOLDER      = "Interface\\Addons\\oqueue\\art\\place_holder.tga" ;
 
 function oq.save_position( f ) 
   if (f._save_position) then
@@ -82,6 +83,20 @@ function oq.moveto( f, x, y )
   end
 end
 
+function oq.move_y( f, y, adjust_br )
+  if (f) and (f:GetParent()) then
+    local x  = floor( f:GetLeft() - f:GetParent():GetLeft() ) ;
+    y = floor(y) ;
+    f:SetPoint("TOPLEFT", x, -1 * y ) ;
+    
+    if (adjust_br) then
+      local cx = floor(f:GetWidth()) ;
+      local cy = min( 25, max( 25, floor(f:GetHeight()))) ;
+      f:SetPoint("BOTTOMRIGHT", f:GetParent(), "TOPLEFT", x+cx,-1*(y+cy) ) ; 
+    end
+  end
+end
+
 function oq.setpos( f, x, y, cx, cy )
   if (f) then
     oq.moveto( f, x, y ) ;
@@ -117,9 +132,50 @@ function oq.frame_report( opt )
     arg = strlower(opt:sub(opt:find(' ')+1, -1)) ;
   end
   print( "--[ frame dump ]--" ) ;
+  local n = 0 ;
+  local s = nil ;
+  local i, v ;
   for i,v in pairs(oq.__frame_pool) do
     if (arg == nil) or (strlower(i):find(arg)) then
-      print( " ".. tostring(tbl.size(v)-1) .." / ".. tostring(v[0] or 0) .." ".. tostring(i) ) ;
+      n = tbl.size(v) ;
+      if (n <= 1) then
+        s = "-" ;
+      else
+        s = tostring(n-1) ;
+      end
+      print( " ".. s .." / ".. tostring(v[0] or 0) .." ".. tostring(i) ) ;
+    end
+  end
+  print( "--" ) ;
+  print( "in-use: ".. tostring(tbl.size(oq.__frame_pool["#check"])) ) ;
+  print( "tables: ".. tostring(tbl.size(tbl.__pool)) .." of ".. tostring(tbl._count) ) ;
+end
+
+function oq.frames_inuse_report( opt )
+  local arg = nil ;
+  if (opt) and (opt:find(' ')) then
+    arg = strlower(opt:sub(opt:find(' ')+1, -1)) ;
+  end
+  print( "--[ frames inuse ]--" ) ;
+  local n = 0 ;
+  local s = nil ;
+  local i, v ;
+  for i,v in pairs(oq.__frame_pool["#check"]) do
+    if (arg == nil) or (strlower(v):find(arg)) then
+      if (i.raid_token) then
+        local p = oq.premades[i.raid_token] ;
+        if (p) then
+          if (p._row) then
+            print( " ".. tostring(v) .."  ".. tostring(i) .."  tok(".. tostring(i.raid_token) ..") ".. " |cFF20F020".. tostring(p._row) .."|r " ) ;      
+          else
+            print( " ".. tostring(v) .."  ".. tostring(i) .."  tok(".. tostring(i.raid_token) ..") ".. " no row" ) ;      
+          end
+        else
+          print( " ".. tostring(v) .."  ".. tostring(i) .."  tok(".. tostring(i.raid_token) ..") "  ) ;      
+        end
+      else
+        print( " ".. tostring(v) .."  ".. tostring(i) ) ;
+      end
     end
   end
   print( "--" ) ;
@@ -127,40 +183,42 @@ end
 
 function oq.DeleteFrame( f ) 
   if (f == nil) then
-    return ;
+    return nil ;
+  end
+  if (type(f) ~= "table") then
+    return nil ;
   end
   f:Hide() ;
---  oq.__frame_pool[strlower(f:GetName())][f] = true ;
-  table.insert( oq.__frame_pool[strlower(f:GetName())], f ) ;  
   f:SetParent(nil) ;
+  local key = oq.__frame_pool["#check"][f] ;
+  tbl.push( oq.__frame_pool[key], f ) ;  
+  oq.__frame_pool["#check"][f] = nil ;
+  return nil ;
 end
 
 function oq.CreateFrame( type_, name, parent, template )
-  if (oq.__frame_pool == nil) then
-    oq.__frame_pool = tbl.new() ;
-  end
   type_ = strlower(type_) ;
   name  = strlower(name) ;
-  local key = name ;
   
-  if (oq.__frame_pool[key] == nil) then
-    oq.__frame_pool[key] = tbl.new() ;
-    tbl.clear( oq.__frame_pool[key] ) ;
-    oq.__frame_pool[key][0] = 0 ;
+  if (oq.__frame_pool[name] == nil) then
+    oq.__frame_pool[name] = tbl.new() ;
+    tbl.clear( oq.__frame_pool[name] ) ;
+    oq.__frame_pool[name][0] = 0 ;
   end
   
-  local pool = oq.__frame_pool[key] ;
+  local pool = oq.__frame_pool[name] ;
   local ndx = tbl.next(pool) ;
   local f = nil ;
-  if (ndx) and (pool[ndx]) then
+  if (ndx) and (pool[ndx]) and (type(pool[ndx]) == "table") and (pool[ndx].SetParent) then
     f = pool[ndx] ;
     pool[ndx] = nil ;
     f:SetParent( parent ) ;
-    -- what about name and template?
   else
     f = CreateFrame( type_, name, parent, template ) ;
     pool[0] = (pool[0] or 0) + 1 ;
   end
+  oq.__frame_pool["#check"][f] = name ; -- track the checked out frames
+  
   if (parent ~= nil) then
     f:SetFrameLevel( parent:GetFrameLevel() + 1 ) ;
   end
@@ -188,7 +246,8 @@ end
 function oq.editbox( parent, name, x, y, cx, cy, max_chars, func, init_val )
   local e = oq.CreateFrame("EditBox", "OQEditBox", parent ) ;
   e:SetMultiLine(true) ;
-  e:SetPoint("TOPLEFT", parent, "TOPLEFT", x,-y ) ; 
+  e:SetPoint("TOPLEFT", parent, "TOPLEFT", x-4,-y ) ; 
+  e:SetWidth ( cx ) ;
   e:SetPoint("BOTTOMRIGHT", parent, "TOPLEFT", x+cx,-y-cy ) ; 
   e.str = init_val or "" ;
   e.func = func ;
@@ -288,6 +347,22 @@ end
 
 function oq.panel( parent, name, x, y, cx, cy, no_texture )
   local f = oq.CreateFrame("FRAME", name, parent ) ;
+  f:SetPoint("TOPLEFT",f:GetParent(),"TOPLEFT", x, -1 * y) ;
+  f:SetWidth (cx) ; -- Set these to whatever height/width is needed 
+  f:SetHeight(cy) ; -- for your Texture
+  f:SetBackdropColor(0.2,0.2,0.2,1.0);
+
+  if (not no_texture) then
+    local t = f:CreateTexture(nil,"BACKGROUND") ;
+    t:SetAllPoints(f) ;
+    t:SetDrawLayer("BACKGROUND") ;
+    f.texture = t ;
+  end
+  return f ;
+end
+
+function oq.click_panel( parent, name, x, y, cx, cy, no_texture )
+  local f = oq.CreateFrame("BUTTON", name, parent ) ;
   f:SetPoint("TOPLEFT",f:GetParent(),"TOPLEFT", x, -1 * y) ;
   f:SetWidth (cx) ; -- Set these to whatever height/width is needed 
   f:SetHeight(cy) ; -- for your Texture
@@ -432,6 +507,7 @@ end
 
 function oq.menu_clear() 
   oq.__menu:Hide() ;
+  local i ;
   for i=1,OQ.MAX_MENU_OPTIONS do
     if (oq.__menu_options[i]) then
       oq.__menu_options[i]:Hide() ;
@@ -468,6 +544,7 @@ function oq.menu_create()
                                      end ) ;
 
     local y = 8 ;
+    local i ;
     for i=1,OQ.MAX_MENU_OPTIONS do
       local m = oq.CreateFrame( "BUTTON", "OQMenuOption", oq.__menu ) ;
       y = oq.__menu._cy * (i-1) ;
@@ -493,7 +570,6 @@ function oq.menu_create()
       t:SetAlpha( 0.6 ) ;
       t:Hide() ;
       m._highlight = t ;
-      
       m._label = oq.label( m, 18, 3, 140, oq.__menu._cy, "" ) ;
       m._label:SetTextColor( 1,1,1,1 ) ;
       m:SetScript( "OnEnter", function(self, ...) 
@@ -504,12 +580,16 @@ function oq.menu_create()
                                 if (self._func) then self._highlight:Hide() ; end 
                                 if (self:GetParent()) then self:GetParent()._last_move_tm = GetTime() ; end 
                               end ) ;
-      m:SetScript( "OnClick", function(self) 
+      m:RegisterForClicks("LeftButtonUp", "RightButtonUp") ;      
+      m:SetScript( "OnClick", function(self,button) 
+                                local stay_open = nil ;
                                 if (self._func) then 
-                                  self._func( self:GetParent():GetParent(), self._arg1, self._arg2 ) ; 
+                                  stay_open = self._func( self:GetParent():GetParent(), self._arg1, self._arg2, button ) ; 
                                   PlaySound("igMainMenuOptionCheckBoxOff") ;
                                 end 
-                                self:GetParent():Hide() ;
+                                if (not stay_open) then
+                                  self:GetParent():Hide() ;
+                                end
                               end
                   ) ;
       oq.__menu_options[i] = m ;
@@ -524,6 +604,7 @@ function oq.menu_add( text, arg1, arg2, checked, func )
     oq.menu_create() ;
   end
   
+  local i ;
   for i=1,OQ.MAX_MENU_OPTIONS do
     if (oq.__menu_options[i]) and (oq.__menu_options[i]._text == nil) then
       local m = oq.__menu_options[i] ;
@@ -542,6 +623,7 @@ end
 function oq.menu_show_core( f, width )
   if (oq.__menu) then
     local n = 0 ;
+    local i ;
     for i=1,OQ.MAX_MENU_OPTIONS do 
       if (oq.__menu_options[i]) and (oq.__menu_options[i]._text ~= nil) then
         n = n + oq.__menu._cy ;
@@ -609,7 +691,7 @@ function oq.menu_is_visible()
 end
 
 function oq.combo_box( parent, x, y, edit_cx, cy, populate_list_func, init_text ) 
-  local cb = oq.texture_button( parent, x + edit_cx + 2, y, 20, cy, OQ.DOWNARROW_UP, OQ.DOWNARROW_DOWN ) ;
+  local cb = oq.texture_button( parent, x + edit_cx + 2, y, 16, cy, OQ.DOWNARROW_UP, OQ.DOWNARROW_DOWN ) ;
   cb:SetFrameLevel( parent:GetFrameLevel() + 5 ) ;
   cb._populate = populate_list_func ;
   cb._edit = oq.editbox( parent, cb:GetName() .."Edit", x, y, edit_cx, cy, 35, nil, "" ) ;   
@@ -619,7 +701,7 @@ function oq.combo_box( parent, x, y, edit_cx, cy, populate_list_func, init_text 
   cb._edit:Disable() ;
   cb._edit:SetText( init_text or "" ) ;
   cb._edit:SetFrameLevel( parent:GetFrameLevel() + 5 ) ;
-  cb:SetScript( "OnClick", function(self) 
+  cb:SetScript( "OnClick", function(self,button) 
                              if (oq.menu_is_visible()) then
                                oq.menu_hide() ;
                              else
@@ -627,6 +709,28 @@ function oq.combo_box( parent, x, y, edit_cx, cy, populate_list_func, init_text 
                                  self._populate() ;
                                end
                                oq.menu_show( self._edit, "TOPLEFT", 0, -25, "BOTTOMLEFT", self._edit:GetWidth() + 22 ) ;
+                             end
+                           end 
+              ) ;
+  return cb ;
+end
+
+function oq.button_pulldown( parent, x, y, cx, cy, populate_list_func, init_texture ) 
+  local cb = oq.texture_button( parent, x+cx+2, y, 16, cy, OQ.DOWNARROW_UP, OQ.DOWNARROW_DOWN ) ;
+  cb:SetFrameLevel( parent:GetFrameLevel() + 5 ) ;
+  cb._selected = oq.texture( parent, x, y, cx, cy, init_texture ) ;
+  if (init_texture == nil) then
+    cb._selected.texture:SetTexture( OQ.PLACEHOLDER ) ;
+  end
+  cb._populate = populate_list_func ;
+  cb:SetScript( "OnClick", function(self,button) 
+                             if (oq.menu_is_visible()) then
+                               oq.menu_hide() ;
+                             else
+                               if (self._populate) then
+                                 self._populate() ;
+                               end
+                               oq.menu_show( self._selected, "TOPLEFT", 0, -25, "BOTTOMLEFT", self._selected:GetWidth()*2 + 125 ) ;
                              end
                            end 
               ) ;

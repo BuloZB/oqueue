@@ -3,29 +3,35 @@
 <Frame name="OQMainFrame"
        toplevel="true"
        frameStrata="BACKGROUND"
-       movable="true"
        enableMouse="true"
+       movable="true"
+       resizable="true" 
        hidden="false"
        parent="UIParent">
        <Size> 
-           <AbsDimension x="800" y="425"/>
+           <AbsDimension x="835" y="475"/>
        </Size>
+       <ResizeBounds>
+         <minResize x="835" y="475"/>
+         <maxResize x="835" y="1000"/>
+       </ResizeBounds>
+
        <Anchors>
            <Anchor point="CENTER">
                <Offset><AbsDimension x="-200" y="200"/></Offset>
            </Anchor>
        </Anchors>
        
-<Backdrop bgFile="Interface\FrameGeneral\UI-Background-Marble" 
-          edgeFile="Interface\DialogFrame\UI-DialogBox-Border" 
-          horizTile="true" vertTile="true">
-  <EdgeSize>
-    <AbsValue val="16"/>
-  </EdgeSize>
-  <BackgroundInsets>
-    <AbsInset left="2" right="3" top="3" bottom="2"/>
-  </BackgroundInsets>
-</Backdrop>       
+       <Backdrop bgFile="Interface\FrameGeneral\UI-Background-Marble" 
+                 edgeFile="Interface\DialogFrame\UI-DialogBox-Border" 
+                 horizTile="true" vertTile="true">
+         <EdgeSize>
+           <AbsValue val="16"/>
+         </EdgeSize>
+         <BackgroundInsets>
+           <AbsInset left="2" right="3" top="3" bottom="2"/>
+         </BackgroundInsets>
+       </Backdrop>       
        
        <Layers>
            <Layer level="ARTWORK">
@@ -53,6 +59,30 @@
            </Layer>
        </Layers>
        <Frames>
+			<Button name="$parentResizeCorner">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-3" y="3"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						OQ_ResizeMouse_down( self ) ;
+					</OnMouseDown>
+					<OnLoad>
+						self:GetNormalTexture():SetVertexColor(0.6, 0.6, 0.6)
+					</OnLoad>
+					<OnMouseUp>
+						OQ_ResizeMouse_up( self ) ;
+					</OnMouseUp>
+					<OnHide>
+						self:GetParent():StopMovingOrSizing()
+					</OnHide>
+				</Scripts>
+				<NormalTexture file="Interface\AddOns\oqueue\art\resize"/>
+			</Button>
+			
            <Frame name="OQTabPage1" hidden="true">
                <Anchors>
                    <Anchor point="TOPLEFT"/>

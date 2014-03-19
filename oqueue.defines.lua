@@ -51,6 +51,52 @@ OQ.TYPE_LADDER    = 'L' ;
 OQ.TYPE_CHALLENGE = 'C' ;
 OQ.TYPE_MISC      = 'M' ;
 
+OQ.VOIP_DOLBYAXON   = 'D' ;
+OQ.VOIP_MUMBLE      = 'M' ;
+OQ.VOIP_NOVOICE     = '0' ;
+OQ.VOIP_RAIDCALL    = 'R' ;
+OQ.VOIP_SKYPE       = 'S' ;
+OQ.VOIP_TEAMSPEAK   = 'T' ;
+OQ.VOIP_UNSPECIFIED = '-' ;
+OQ.VOIP_VENTRILO    = 'V' ;
+
+OQ.VOIP_ICON = { [OQ.VOIP_VENTRILO   ] = "Interface\\Addons\\oqueue\\art\\voip_ventrilo.tga",
+                 [OQ.VOIP_SKYPE      ] = "Interface\\Addons\\oqueue\\art\\voip_skype.tga",
+                 [OQ.VOIP_TEAMSPEAK  ] = "Interface\\Addons\\oqueue\\art\\voip_teamspeak.tga",
+                 [OQ.VOIP_DOLBYAXON  ] = "Interface\\Addons\\oqueue\\art\\voip_axon.tga",
+                 [OQ.VOIP_RAIDCALL   ] = "Interface\\Addons\\oqueue\\art\\voip_raidcall.tga",
+                 [OQ.VOIP_MUMBLE     ] = "Interface\\Addons\\oqueue\\art\\voip_mumble.tga",
+                 [OQ.VOIP_UNSPECIFIED] = nil,
+                 [OQ.VOIP_NOVOICE    ] = "Interface\\Addons\\oqueue\\art\\voip_novoice.tga",
+               } ;
+
+OQ.LANG_UNSPECIFIED   = 'A' ;
+OQ.LANG_US_ENGLISH    = 'B' ;
+OQ.LANG_UK_ENGLISH    = 'C' ;
+OQ.LANG_OC_ENGLISH    = 'D' ;
+OQ.LANG_FRENCH        = 'E' ;
+OQ.LANG_GERMAN        = 'F' ;
+OQ.LANG_ITALIAN       = 'G' ;
+OQ.LANG_ES_SPANISH    = 'H' ;
+OQ.LANG_MX_SPANISH    = 'I' ;
+OQ.LANG_BR_PORTUGUESE = 'J' ;
+OQ.LANG_PT_PORTUGUESE = 'K' ;
+OQ.LANG_RUSSIAN       = 'L' ;
+
+OQ.LANG_ICON = { [OQ.LANG_UNSPECIFIED  ] = nil,
+                 [OQ.LANG_US_ENGLISH   ] = "Interface\\Addons\\oqueue\\art\\lang_us.tga",
+                 [OQ.LANG_UK_ENGLISH   ] = "Interface\\Addons\\oqueue\\art\\lang_uk.tga",
+                 [OQ.LANG_OC_ENGLISH   ] = "Interface\\Addons\\oqueue\\art\\lang_oc.tga",
+                 [OQ.LANG_RUSSIAN      ] = "Interface\\Addons\\oqueue\\art\\lang_ru.tga",
+                 [OQ.LANG_GERMAN       ] = "Interface\\Addons\\oqueue\\art\\lang_de.tga",
+                 [OQ.LANG_ES_SPANISH   ] = "Interface\\Addons\\oqueue\\art\\lang_es.tga",
+                 [OQ.LANG_MX_SPANISH   ] = "Interface\\Addons\\oqueue\\art\\lang_mx.tga",
+                 [OQ.LANG_BR_PORTUGUESE] = "Interface\\Addons\\oqueue\\art\\lang_br.tga",
+                 [OQ.LANG_PT_PORTUGUESE] = "Interface\\Addons\\oqueue\\art\\lang_pt.tga",
+                 [OQ.LANG_FRENCH       ] = "Interface\\Addons\\oqueue\\art\\lang_fr.tga",
+                 [OQ.LANG_ITALIAN      ] = "Interface\\Addons\\oqueue\\art\\lang_it.tga",
+               } ;
+
 OQ.PREMADE_TYPES = { [ OQ.TYPE_NONE      ] = 1,
                      [ OQ.TYPE_BG        ] = 1,
                      [ OQ.TYPE_RBG       ] = 1,
@@ -222,6 +268,11 @@ OQ.ROLES        = { [ "DAMAGER" ] = 1,
                     [ "T" ]       = 4,
                   } ;
 
+OQ.ROLE_FLAG = { ["dps" ]           = 0x0001,
+                 ["heal"]           = 0x0002,
+                 ["tank"]           = 0x0004,
+               } ;
+                
 OQ.CLASS_TEXTCLR = {
 	["DK"]      = "|cFFC41F3B",
 	["DR"]      = "|cFFFF7D0A",
@@ -298,6 +349,19 @@ OQ.TINY_CLASS  = { ["DK"]           = "A",
                    ["N" ]           = "ZZ",
                  } ;
                  
+OQ.CLASS_FLAG = { ["DK"]           = 0x0001,
+                  ["DR"]           = 0x0002,
+                  ["HN"]           = 0x0004,
+                  ["MG"]           = 0x0008,
+                  ["MK"]           = 0x0010,
+                  ["PA"]           = 0x0020,
+                  ["PR"]           = 0x0040,
+                  ["RO"]           = 0x0080,
+                  ["SH"]           = 0x0100,
+                  ["LK"]           = 0x0200,
+                  ["WA"]           = 0x0400,
+                } ;
+                 
 OQ.RDPS   = 1 ;
 OQ.MDPS   = 2 ;
 OQ.CASTER = 3 ;
@@ -313,9 +377,9 @@ OQ.CLASS_SPEC   = { [250]  = { id =  1, type = OQ.TANK  , n = "DK.Blood"        
                     [253]  = { id =  8, type = OQ.RDPS  , n = "HN.Beast"        , spy = "Knockback" },
                     [254]  = { id =  9, type = OQ.RDPS  , n = "HN.Marksmanship" , spy = "Ranged" },
                     [255]  = { id = 10, type = OQ.RDPS  , n = "HN.Survival"     , spy = "Ranged" },
-                    [ 62]  = { id = 11, type = OQ.CASTER, n = "MA.Arcane"       , spy = "Knockback" },
-                    [ 63]  = { id = 12, type = OQ.CASTER, n = "MA.Fire"         , spy = "Ranged" },
-                    [ 64]  = { id = 13, type = OQ.CASTER, n = "MA.Frost"        , spy = "Ranged" },
+                    [ 62]  = { id = 11, type = OQ.CASTER, n = "MG.Arcane"       , spy = "Knockback" },
+                    [ 63]  = { id = 12, type = OQ.CASTER, n = "MG.Fire"         , spy = "Ranged" },
+                    [ 64]  = { id = 13, type = OQ.CASTER, n = "MG.Frost"        , spy = "Ranged" },
                     [268]  = { id = 14, type = OQ.MDPS  , n = "MK.Brewmaster"   , spy = "Tank" },
                     [269]  = { id = 15, type = OQ.MDPS  , n = "MK.Windwalker"   , spy = "Melee" },
                     [270]  = { id = 16, type = OQ.MDPS  , n = "MK.Mistweaver"   , spy = "Healer" },

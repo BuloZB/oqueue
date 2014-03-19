@@ -213,9 +213,9 @@ function oq.get_raid_progression()
   flags = oq.bset( flags, 0x04, oq.has_completed( 6793 ) or oq.has_completed( 7919 ) ) ; -- Gara'jal the Spiritbinder
   flags = oq.bset( flags, 0x08, oq.has_completed( 6795 ) or oq.has_completed( 7921 ) ) ; -- Four Kings
   flags = oq.bset( flags, 0x10, oq.has_completed( 6797 ) or oq.has_completed( 7923 ) ) ; -- Elegon
---  flags = oq.bset( flags, 0x01, oq.has_completed( 6799 ) or oq.has_completed( 7914 ) ) ; -- Qin-xi
+  flags = oq.bset( flags, 0x20, oq.has_completed( 6799 ) or oq.has_completed( 7926 ) ) ; -- Qin-xi
   mv = mv .."".. oq.encode_mime64_1digit( flags ) ;
-  
+
   -- 10 and 25 man heroic
   flags = 0 ;
   flags = oq.bset( flags, 0x01, oq.has_completed( 6790 ) or oq.has_completed( 7915 ) ) ; -- Stone Guard
@@ -223,7 +223,7 @@ function oq.get_raid_progression()
   flags = oq.bset( flags, 0x04, oq.has_completed( 6794 ) or oq.has_completed( 7920 ) ) ; -- Gara'jal the Spiritbinder
   flags = oq.bset( flags, 0x08, oq.has_completed( 6796 ) or oq.has_completed( 7922 ) ) ; -- Four Kings
   flags = oq.bset( flags, 0x10, oq.has_completed( 6798 ) or oq.has_completed( 7924 ) ) ; -- Elegon
---  flags = oq.bset( flags, 0x01, oq.has_completed( 6799 ) or oq.has_completed( 7914 ) ) ; -- Qin-xi
+  flags = oq.bset( flags, 0x20, oq.has_completed( 6800 ) or oq.has_completed( 7927 ) ) ; -- Qin-xi
   mv = mv .."".. oq.encode_mime64_1digit( flags ) ;
   
   -- throne of thunder
@@ -264,8 +264,76 @@ function oq.get_raid_progression()
   flags = oq.bset( flags, 0x20, oq.has_completed( 8202 ) or oq.has_completed( 8201 ) ) ; -- Lei Shen
   tot = tot .."".. oq.encode_mime64_1digit( flags ) ;  
   flags = 0 ;
-  flags = oq.bset( flags, 0x20, oq.has_completed( 8203 ) or oq.has_completed( 8256 ) ) ; -- Ra-den
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8203 ) or oq.has_completed( 8256 ) ) ; -- Ra-den
   tot = tot .."".. oq.encode_mime64_1digit( flags ) ;  
+  
+  -- siege of orgrimmar
+  local soo = "" ;
+  -- 10 and 25 man normal
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8551 ) or oq.has_completed( 8552 ) ) ; -- Immerseus
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8557 ) or oq.has_completed( 8558 ) ) ; -- The Fallen Protectors
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8563 ) or oq.has_completed( 8564 ) ) ; -- Norushen
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8569 ) or oq.has_completed( 8570 ) ) ; -- Sha of Pride
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8576 ) or oq.has_completed( 8577 ) ) ; -- Galakras
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8582 ) or oq.has_completed( 8583 ) ) ; -- Iron Juggernaut
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8588 ) or oq.has_completed( 8589 ) ) ; -- Kor'kron Dark Shaman
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8595 ) or oq.has_completed( 8596 ) ) ; -- General Nazgrim
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8601 ) or oq.has_completed( 8602 ) ) ; -- Malkorok
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8608 ) or oq.has_completed( 8609 ) ) ; -- Spoils of Pandaria
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8616 ) or oq.has_completed( 8617 ) ) ; -- Thok the Bloodthirsty
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8622 ) or oq.has_completed( 8623 ) ) ; -- Siegecrafter Blackfuse
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8628 ) or oq.has_completed( 8629 ) ) ; -- Paragons of the Klaxxi
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8635 ) or oq.has_completed( 8636 ) ) ; -- Garrosh Hellscream
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  
+  -- 10 and 25 man heroic  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8553 ) or oq.has_completed( 8554 ) ) ; -- Immerseus
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8559 ) or oq.has_completed( 8560 ) ) ; -- The Fallen Protectors
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8565 ) or oq.has_completed( 8566 ) ) ; -- Norushen
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8571 ) or oq.has_completed( 8573 ) ) ; -- Sha of Pride
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8578 ) or oq.has_completed( 8579 ) ) ; -- Galakras
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8584 ) or oq.has_completed( 8585 ) ) ; -- Iron Juggernaut
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8590 ) or oq.has_completed( 8591 ) ) ; -- Kor'kron Dark Shaman
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8597 ) or oq.has_completed( 8598 ) ) ; -- General Nazgrim
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8603 ) or oq.has_completed( 8604 ) ) ; -- Malkorok
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8610 ) or oq.has_completed( 8612 ) ) ; -- Spoils of Pandaria
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8618 ) or oq.has_completed( 8619 ) ) ; -- Thok the Bloodthirsty
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8624 ) or oq.has_completed( 8625 ) ) ; -- Siegecrafter Blackfuse
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8630 ) or oq.has_completed( 8631 ) ) ; -- Paragons of the Klaxxi
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8637 ) or oq.has_completed( 8638 ) ) ; -- Garrosh Hellscream
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  
+  -- flex
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8550 ) ) ; -- Immerseus
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8556 ) ) ; -- The Fallen Protectors
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8562 ) ) ; -- Norushen
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8568 ) ) ; -- Sha of Pride
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8575 ) ) ; -- Galakras
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8581 ) ) ; -- Iron Juggernaut
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8587 ) ) ; -- Kor'kron Dark Shaman
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8594 ) ) ; -- General Nazgrim
+  flags = oq.bset( flags, 0x04, oq.has_completed( 8600 ) ) ; -- Malkorok
+  flags = oq.bset( flags, 0x08, oq.has_completed( 8606 ) ) ; -- Spoils of Pandaria
+  flags = oq.bset( flags, 0x10, oq.has_completed( 8615 ) ) ; -- Thok the Bloodthirsty
+  flags = oq.bset( flags, 0x20, oq.has_completed( 8621 ) ) ; -- Siegecrafter Blackfuse
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
+  flags = 0 ;
+  flags = oq.bset( flags, 0x01, oq.has_completed( 8627 ) ) ; -- Paragons of the Klaxxi
+  flags = oq.bset( flags, 0x02, oq.has_completed( 8634 ) ) ; -- Garrosh Hellscream
+  soo = soo .."".. oq.encode_mime64_1digit( flags ) ;  
   
   -- bosses and wipes
   local nbosses, nwipes = oq.get_nboss_kills() ;
@@ -276,7 +344,7 @@ function oq.get_raid_progression()
   
   -- put it all together
   -- AA BB CC DDDDD bbbWWdddmmm
-  return toes .."".. hof .."".. mv .."".. tot .."".. record ;
+  return toes .. hof .. mv .. tot .. record .. soo ;
 end
 
 function oq.get_pvp_experience()

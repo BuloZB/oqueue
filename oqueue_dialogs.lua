@@ -43,6 +43,28 @@ StaticPopupDialogs["OQ_AddToonName"] = {
   hasEditBox = true
 }
 
+StaticPopupDialogs["OQ_ArmoryPopup"] = {
+  preferredIndex=STATICPOPUPS_NUMDIALOGS,
+  text = OQ.DLG_23,
+  button1 = OQ.DLG_OK,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  OnShow = function (self, data)
+    self.editBox:SetWidth( 275 ) ;
+    self.editBox:SetFocus() ;
+  end,
+  OnAccept = function (self, data, data2)
+  end,
+  EditBoxOnEnterPressed = function(self)
+    self:GetParent():Hide() ;
+  end,
+  EditBoxOnEscapePressed = function(self)
+    self:GetParent():Hide() ;
+  end,
+  hasEditBox = true
+}
+
 StaticPopupDialogs["OQ_BanBTag"] = {
   preferredIndex=STATICPOPUPS_NUMDIALOGS,
   text = OQ.DLG_17,

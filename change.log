@@ -1,6 +1,46 @@
 ﻿change.log for oQueue
 
-v1.8.2a BUGFIX: made sure empty premade lines wouldn't show
+v1.8.4e BUGFIX: initial height irregularity 
+        BUGFIX: battle.net links will now use GetLocale() to pick up the language and GetCVar("realmList") to pick up the region
+        UPD: reworded hint #5 and appended hint #21
+        add: italian translation (Thx B1G3M!!)
+        add: count next to voip and language filter selection
+        add: exclusion filters for premade, voip and language types (toggle by right-clicking the selection on the find-premade filter list)
+        add: clear-filters button on the find-premade tab will reset the list
+
+v1.8.4 ** HARD RESTART REQUIRED **  (new files)
+        BUGFIX: default value for onSizeChanged
+        BUGFIX: removed pvp rank from scenario tooltips
+        UPD: main premade tab will now resize properly 
+        UPD: lots of bug chasing to clear out bad, lost or duped rows
+        UPD: additional resize elements
+        UPD: tooltip for pve progression updated for SoO
+        UPD: resized setup panel properly
+        UPD: mesh tags will no longer clear before being found on the friends list (ppl would clear and those yet to accept would be forgotten)
+        UPD: removed oqgeneral connection; now only connected to oqchannel
+        add: cmdline option to completely clear log and re-initialize it; /oq log clear
+        add: cmdline option to list outstanding mesh tags; /oq show meshtags
+        add: cmdline option to wipe btag mesh cache; /oq clear meshtags
+        add: new qualfiers for group creation (voip, language, role and class)
+        add: new filters on find-premade; pulldown for voip and language type
+        add: new columns on find-premade; will show voip and language flag
+        add: x-faction scorekeeper relay
+        add: ctrl+left-click on find-premade or the wait-list will popup a wowarmory link; copy/paste into your browser
+        add: auto-hide friend requests will now turn off the b.net notification as well as hide the yellow text
+        add: hint-shade
+
+v1.8.3  ** HARD RESTART REQUIRED **  (new file)
+        UPD: list refresh issues
+        UPD: spanish translation update (thx Yllelder!)
+        UPD: french translation (thx Alathea!)
+        UPD: clearing premades will also clear local leaders (/oq clear premades)
+        add: vertical resize thumb in lower right
+        add: find-premade row height adjustment; range: 15-30  cmdline: /oq set rowheight [n]
+        add: ui height resize capability; range: 400-1000  cmdline: /oq set height[n]
+        add: check against nil channel-id 
+        add: check against nil btags on waitlists
+
+v1.8.2  BUGFIX: made sure empty premade lines wouldn't show
         BUGFIX: oq panels originally positioned with negative x or y fixed
         BUGFIX: row hilight when pending was removed when scrolling or going to different sections
         BUGFIX: rows that fell off the top or bottom being forced into hiding
